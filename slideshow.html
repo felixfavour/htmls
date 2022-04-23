@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slideshow</title>
+  <style>
+    button {
+      font-size: 32px;
+      margin-top: 24px;
+    }
+    .slideshow-ctn > .inner {
+      display: flex;
+    }
+    .hidden-slide {
+      display: none;
+    }
+    .visible-slide {
+      display: inline-flex;
+    }
+    img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="slideshow-ctn">
+    <div class="inner">
+      <img class="visible-slide slide" src="image1.jpeg" alt="">
+      <img class="hidden-slide slide" src="image2.jpeg" alt="">
+      <img class="hidden-slide slide" src="image3.jpeg" alt="">
+    </div>
+    <button onclick="previousImage()">
+      Previous Image
+    </button>
+    <button onclick="nextImage()">
+      Next Image
+    </button>
+  </div>
+  <script>
+    const images = document.querySelectorAll('.slide');
+
+    // This is my function to go to the next Image
+    const nextImage = () => {
+      for (let i = 0; i < images.length; i++) {
+
+        // Step 1: Check if there is any image that is visible
+        if(images[i].classList.contains('visible-slide')) {
+          images[i].classList.add('hidden-slide')
+          images[i].classList.remove('visible-slide')
+
+          // Add 'visible-slide' to the adjacent/next image.
+          if (i < (images.length - 1)) {
+            images[i+1].classList.remove('hidden-slide')
+            images[i+1].classList.add('visible-slide')
+          } else {
+            images[0].classList.remove('hidden-slide')
+            images[0].classList.add('visible-slide')
+          }
+          break;
+        }
+      }
+    };
+
+    /*
+      This is my function to go to the previous image
+    */
+    const previousImage = () => {
+      for (let i = 0; i < images.length; i++) {
+
+        // Step 1: Check if there is any image that is visible
+        if(images[i].classList.contains('visible-slide')) {
+          images[i].classList.add('hidden-slide')
+          images[i].classList.remove('visible-slide')
+
+          // Add 'visible-slide' to the adjacent/previous image.
+          if (i === 0) {
+            images[images.length - 1].classList.remove('hidden-slide')
+            images[images.length - 1].classList.add('visible-slide')
+          } else {
+            images[i-1].classList.remove('hidden-slide')
+            images[i-1].classList.add('visible-slide')
+          }
+          break;
+        }
+      }
+    };
+
+  </script>
+</body>
+</html>
