@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    .container {
+      height: 100vh;
+      background-color: red;
+    }
+    .loading-element {
+      position: absolute;
+      inset: 0;
+      background: #5b5b5b7e;
+      display: grid;
+      place-items: center;
+    }
+    .loading-element > .el {
+      height: 60px;
+      width: 60px;
+      border-radius: 50%;
+      border: 10px solid;
+    }
+  </style>
+</head>
+<body>
+  <!-- Container -->
+  <div class="container">
+    <!-- Loader Elemet container -->
+    <div class="loading-element">
+    </div>
+    <!-- Loader Element -->
+    <div class="el">
+    </div>
+  </div>
+</body>
+</html>
