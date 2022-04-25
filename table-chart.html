@@ -6,63 +6,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 2rem;
+    }
     td.active {
-      background-color: red;
+      background-color: pink;
       color: white;
+      height: 100px;
+      min-height: 100px;
+    }
+    .colored-container {
+      height: 100%;
+      width: 100%;
+      background-color: red;
+      transform: rotate(90deg);
+      display: grid;
+      place-items: center;
     }
     td {
-      background-color: grey;
+      background-color: pink;
       /* color: transparent; */
       height: 100px;
+      min-height: 100px;
       width: 100px;
-    }
-    td.active {
-      height: 95px;
-      border-bottom: 5px solid grey;
+      min-width: 100px;
+      transition: 0.5s;
     }
     td.active:nth-last-child(1).active {
       height: 100px;
+      min-height: 100px;
       border-bottom: 0;
     }
-
+    table {
+      border-spacing: 0;
+      border: 4px solid;
+      /* padding-right: 25px solid pink; */
+    }
     .table-ctn {
       position: relative;
-    }
-    table {
-      position: absolute;
-      inset: 0;
-      border-spacing: 0;
+      margin-top: 100px;
     }
     .rotated {
       transform: rotate(270deg);
+      transform-origin: 60% 40%;
+    }
+    .inputs {
+      display: flex;
+    }
+    input {
+      width: 50px;
+    }
+    label:nth-last-child(1) {
+      margin-left: 24px;
+    }
+    button {
+      margin-top: 12px;
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.common.dev.min.js" integrity="sha512-TpgbLHXaTCAZ7ULhjopb1PveTz5Jx6KEQUtMfXhV0m0EArh+6O8ybZjjDN1Yug6oagN6iFm6EoMjuYSiFr0qXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
   <div id="app">
-    <h3>One cell represents 5 units</h3>
-    <div class="table-ctn">
-      <table>
-        <tr v-for="(y, indexY) in yAxes">
-          <td v-for="(x, indexX) in xAxes">{{ x }}</td>
-        </tr>
-      </table>
+    <h1>Table Chart Demo</h1>
+    <div class="inputs">
+      <label for="">
+        <div>X axes</div>
+        <input v-for="x,index in xAxes" v-model="xAxes[index]" type="text">
+      </label>
+      <label for="">
+        <div>Y axes</div>
+        <input v-for="y,index in yAxes" v-model="yAxes[index]" type="text">
+      </label>
+    </div>
+    <button @click="remountChart">
+      Remount Chart
+    </button>
+    <h3>{{ maxYCells }} cells on Rows and Cols; One cell represents {{ unit }} units <br> Highest Y: {{ highestY }}</h3>
       <table class="rotated">
         <tr v-for="(x, indexX) in xAxes">
-          <td class="active" v-for="(y in (yAxes[indexX] / 5)"></td>
-          <td v-for="(y in 5 - (yAxes[indexX] / 5)"></td>
+          <td class="active" v-for="(y, indexY) in Math.ceil(getYForX(indexX))">
+            <!-- <div :id="`R${indexX}C${indexY}`" class="empty-container"></div> -->
+            <div :id="`R${indexX}C${indexY}`" class="colored-container"> 
+              <!-- R{{ indexX }}C{{ indexY }} -->
+            </div>
+          </td>
+          <td v-for="y in maxYCells -  Math.ceil(getYForX(indexX))"></td>
         </tr>
       </table>
-    </div>
 
   </div>
   <script>
     const app = new Vue({
       el: '#app',
       data: {
-        xAxes: [5, 10, 15, 20, 25],
-        yAxes: [15, 20, 5, 15, 20]
+        unit: 24, // 1 cell contains [unit] units
+        maxYCells: 6,
+        xAxes: [5, 10, 15, 20, 20, 25, 30],
+        yAxes: [1700, 883, 2520, 1430, 2500, 3000, 1200],
+        reducableCells: []
+      },
+      mounted () {
+        this.findReducedCells()
+        this.applyApproximateCellDimensions()
+      },
+      computed: {
+        highestY () {
+          let high = 0;
+          this.yAxes.forEach((num, i) => {
+            // Find Highest Y Value
+            num > high ? high = num : null
+            // Find Unit of one cell
+            this.unit = (Math.round(high / 5))
+          })
+          return high;
+        }
+      },
+      methods: {
+        remountChart () {
+          this.findReducedCells()
+          this.applyApproximateCellDimensions()
+        },
+        getYForX (index) {
+          return (this.yAxes[index] / this.unit)
+        },
+        findReducedCells () {
+          // Find Cells that have been Math.ceiled (approximated)
+          this.yAxes.forEach((num, i) => {
+          if (num % this.unit !== 0) {
+              const quotient = num / this.unit
+              this.reducableCells.push({
+                id: `R${i}C${Math.floor(quotient)}`,
+                height: (quotient - Math.floor(quotient)) * 100
+              })
+            }
+          })
+        },
+        applyApproximateCellDimensions () {
+          this.reducableCells.forEach((cell) => {
+            const percent = Number(cell.height )
+            const cellColoredDom = document.querySelector(`#${cell.id}.colored-container`)
+            const cellEmptyDom = document.querySelector(`#${cell.id}.empty-container`)
+            cellColoredDom.style.height = `${cell.height}%`
+            cellColoredDom.style.borderTop = `${100 * ((100 - percent) / 100)}px solid pink`
+          })
+        }
       }
     })
 

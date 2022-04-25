@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .bar.active {
+      background-color: red;
+      color: white;
+    }
+    .bar {
+      background-color: pink;
+      /* color: transparent; */
+      height: 100px;
+      width: 100px;
+    }
+    .bar.active {
+      height: 95px;
+      border-right: 5px solid pink;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.common.dev.min.js" integrity="sha512-TpgbLHXaTCAZ7ULhjopb1PveTz5Jx6KEQUtMfXhV0m0EArh+6O8ybZjjDN1Yug6oagN6iFm6EoMjuYSiFr0qXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <div id="app">
+    <h3>One cell represents 5 units</h3>
+    <div class="table-ctn">
+        < v-for="(y, indexY) in yAxes">
+          <td v-for="(x, indexX) in xAxes">{{ x }}</td>
+        </tr>
+        <tr v-for="(x, indexX) in xAxes">
+          <td class="active" v-for="(y in (yAxes[indexX] / 5)"></td>
+          <td v-for="(y in 5 - (yAxes[indexX] / 5)"></td>
+        </tr>
+    </div>
+
+  </div>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        xAxes: [5, 10, 15, 20, 25], // bottom
+        yAxes: [15, 20, 5, 15, 20]  // height
+      }
+    })
+
+    
+  </script>
+</body>
+</html>

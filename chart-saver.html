@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    td.active {
+      background-color: pink;
+      color: white;
+      height: 100px;
+      min-height: 100px;
+    }
+    .colored-container {
+      height: 100%;
+      width: 100%;
+      background-color: red;
+    }
+    td {
+      background-color: pink;
+      /* color: transparent; */
+      height: 100px;
+      min-height: 100px;
+      width: 100px;
+      min-width: 100px;
+      transition: 0.5s;
+    }
+    td.active {
+      /* height: 95px;
+      border-bottom: 5px solid pink; */
+    }
+    td.active:nth-last-child(1).active {
+      height: 100px;
+      min-height: 100px;
+      border-bottom: 0;
+    }
+
+    .table-ctn {
+      position: relative;
+      margin-top: 100px;
+    }
+    .rotated {
+      transform: rotate(270deg);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.common.dev.min.js" integrity="sha512-TpgbLHXaTCAZ7ULhjopb1PveTz5Jx6KEQUtMfXhV0m0EArh+6O8ybZjjDN1Yug6oagN6iFm6EoMjuYSiFr0qXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <div id="app">
+    <h3>5 cells on Rows and Cols; One cell represents {{ unit }} units <br> Highest Y: {{ highestY }}</h3>
+    <div class="table-ctn">
+      <table class="rotated">
+        <tr v-for="(x, indexX) in xAxes">
+          <td class="active" v-for="(y, index) in Math.ceil(getYForX(indexX))">
+            <div 
+              :style="yAxes[index] % unit === 0 ? `width: 100%` : `width: ${50}%`" 
+              class="colored-container"> 
+              {{ yAxes[index] }}
+            </div>
+          </td>
+          <td v-for="y in 6 -  Math.ceil(getYForX(indexX))"></td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        unit: 10,
+        xAxes: [5, 10, 15, 20, 20],
+        yAxes: [15, 30, 25, 50, 20]
+      },
+      computed: {
+        highestY () {
+          let high = 0;
+          this.yAxes.forEach(num => num > high ? high = num : null)
+          return high;
+        }
+      },
+      methods: {
+        getYForX (index) {
+          return (this.yAxes[index] / this.unit)
+        }
+      }
+    })
+
+    
+  </script>
+</body>
+</html>
