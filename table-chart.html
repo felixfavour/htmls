@@ -11,13 +11,12 @@
       line-height: 2rem;
     }
     td.active {
-      background-color: pink;
-      color: white;
-      height: 100px;
-      min-height: 100px;
+      background-color: white;
+      height: 70px;
+      min-height: 70px;
     }
     .colored-container {
-      height: 100%;
+      height: 107%;
       width: 100%;
       background-color: red;
       transform: rotate(90deg);
@@ -25,43 +24,77 @@
       place-items: center;
     }
     td {
-      background-color: pink;
+      background-color: white;
       /* color: transparent; */
-      height: 100px;
-      min-height: 100px;
-      width: 100px;
-      min-width: 100px;
+      height: 70px;
+      min-height: 70px;
+      width: 70px;
+      min-width: 70px;
       transition: 0.5s;
+      /* border: 1px solid #cecece; */
+    }
+    td.active {
+      border: 0;
     }
     td.active:nth-last-child(1).active {
-      height: 100px;
-      min-height: 100px;
+      height: 70px;
+      min-height: 70px;
       border-bottom: 0;
     }
     table {
+      position: absolute;
       border-spacing: 0;
-      border: 4px solid;
-      /* padding-right: 25px solid pink; */
+      padding-right: 25px solid white;
+      left: 130px;
+      top: 0;
+      border: 6px solid;
     }
     .table-ctn {
       position: relative;
-      margin-top: 100px;
     }
     .rotated {
       transform: rotate(270deg);
-      transform-origin: 60% 40%;
+      /* transform-origin: 50% 35%; */
     }
     .inputs {
       display: flex;
     }
     input {
-      width: 50px;
+      width: 70px;
     }
     label:nth-last-child(1) {
       margin-left: 24px;
     }
     button {
       margin-top: 12px;
+    }
+    .x-labels {
+      display: flex;
+      position: absolute;
+      top: 525px;
+      left: 60px;
+    }
+    .y-labels {
+      position: absolute;
+      left: 0;
+      top: 70px;
+    }
+    .label-bar {
+      height: 72px;
+      width: 72px;
+    }
+    .y-labels .label-bar {
+      height: 72px;
+      width: 650px;
+      inset: 0;
+      /* border-top: 1px solid #290000; */
+    }
+    .x-labels .label-bar {
+      text-align: right;
+    }
+    tr:nth-of-type(odd) .colored-container {
+      background-color: green;
+      /* margin-right: 20px; */
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.common.dev.min.js" integrity="sha512-TpgbLHXaTCAZ7ULhjopb1PveTz5Jx6KEQUtMfXhV0m0EArh+6O8ybZjjDN1Yug6oagN6iFm6EoMjuYSiFr0qXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -83,10 +116,12 @@
       Remount Chart
     </button>
     <h3>{{ maxYCells }} cells on Rows and Cols; One cell represents {{ unit }} units <br> Highest Y: {{ highestY }}</h3>
+    
+    <div class="table-ctn">
+      <!-- TABLE DATA -->
       <table class="rotated">
         <tr v-for="(x, indexX) in xAxes">
           <td class="active" v-for="(y, indexY) in Math.ceil(getYForX(indexX))">
-            <!-- <div :id="`R${indexX}C${indexY}`" class="empty-container"></div> -->
             <div :id="`R${indexX}C${indexY}`" class="colored-container"> 
               <!-- R{{ indexX }}C{{ indexY }} -->
             </div>
@@ -95,6 +130,21 @@
         </tr>
       </table>
 
+      <!-- LABELS -->
+      <div class="y-labels">
+        <div v-for="y in yScales" class="label-bar">
+          {{ y }}
+        </div>
+      </div>
+      <div class="x-labels">
+        <div v-for="x in xAxes" class="label-bar">
+          {{ x }}
+        </div>
+      </div>
+    </div>
+
+
+
   </div>
   <script>
     const app = new Vue({
@@ -102,13 +152,15 @@
       data: {
         unit: 24, // 1 cell contains [unit] units
         maxYCells: 6,
-        xAxes: [5, 10, 15, 20, 20, 25, 30],
-        yAxes: [1700, 883, 2520, 1430, 2500, 3000, 1200],
+        xAxes: ['', 2010, '', 2020, '', 2022, '', 2024],
+        yAxes: [300, 883, 2520, 1430, 2500, 3000, 1200, 455],
+        yScales: [],
         reducableCells: []
       },
       mounted () {
         this.findReducedCells()
         this.applyApproximateCellDimensions()
+        this.findYScales()
       },
       computed: {
         highestY () {
@@ -142,13 +194,21 @@
             }
           })
         },
+        findYScales () {
+          this.yAxes.forEach((num, i) => {
+            const value = this.unit * (i+1)
+            if (value <= this.highestY) this.yScales.push(value)
+          })
+          this.yScales.push(this.yScales[this.yScales.length - 1] + this.unit)
+          this.yScales.reverse()
+        },
         applyApproximateCellDimensions () {
           this.reducableCells.forEach((cell) => {
             const percent = Number(cell.height )
             const cellColoredDom = document.querySelector(`#${cell.id}.colored-container`)
             const cellEmptyDom = document.querySelector(`#${cell.id}.empty-container`)
             cellColoredDom.style.height = `${cell.height}%`
-            cellColoredDom.style.borderTop = `${100 * ((100 - percent) / 100)}px solid pink`
+            cellColoredDom.style.borderTop = `${70 * ((100 - percent) / 100) + 5}px solid white`
           })
         }
       }
